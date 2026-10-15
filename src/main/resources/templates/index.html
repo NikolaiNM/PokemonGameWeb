@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Битва Покемонов</title>
+    <style>
+        /* === ТЕ ЖЕ СТИЛИ ДЛЯ ЕДИНООБРАЗИЯ === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            max-width: 600px; /* Чуть уже для стартовой страницы, чтобы выглядело компактнее */
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            width: 100%; /* Кнопки на всю ширину для мобильных */
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-green { background-color: #2ecc71; color: white; }
+        .btn-blue { background-color: #3498db; color: white; }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            box-sizing: border-box; /* Чтобы padding не ломал ширину */
+            text-align: center;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="logo">⚡🔥</div>
+<h1 style="color: #2c3e50; margin-bottom: 5px;">Битва Покемонов</h1>
+<p class="subtitle">Консольная классика в новом веб-формате</p>
+
+<!-- Блок для ошибки, если файл сохранения не найден -->
+<div th:if="${errorMessage}" class="alert alert-warning">
+    <p th:text="${errorMessage}" style="margin: 0;"></p>
+</div>
+
+<!-- КАРТОЧКА 1: Начать новую игру -->
+<div class="card">
+    <h2>🌟 Начать новое приключение</h2>
+    <form action="/new" method="post">
+        <input type="text" name="trainerName" placeholder="Введи свое имя (например, Ash)" required autocomplete="off">
+        <button type="submit" class="btn btn-green">Создать тренера и начать</button>
+    </form>
+</div>
+
+<!-- КАРТОЧКА 2: Загрузить сохранение -->
+<div class="card" style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
+    <h2>💾 Продолжить игру</h2>
+    <p style="color: #666; margin-bottom: 20px; font-size: 0.95rem;">
+        Если ты уже играл ранее, твои покемоны и прогресс ждут тебя.
+    </p>
+    <form action="/load-start" method="post">
+        <button type="submit" class="btn btn-blue">📂 Загрузить последнее сохранение</button>
+    </form>
+</div>
+
+<div style="margin-top: 30px; color: #95a5a6; font-size: 0.85rem;">
+    <p>Управление: Мышь и клавиатура<br>Сохранение происходит локально в файл</p>
+</div>
+
+</body>
+</html>

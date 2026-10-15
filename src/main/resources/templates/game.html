@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Статус тренера | Битва Покемонов</title>
+    <style>
+        /* Основные стили страницы */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Стили для карточек (группировка) */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+
+        /* Стили для кнопок */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-green { background-color: #2ecc71; color: white; }
+        .btn-blue { background-color: #3498db; color: white; }
+        .btn-red { background-color: #e74c3c; color: white; }
+        .btn-orange { background-color: #f39c12; color: white; }
+
+        /* Группировка кнопок в строку */
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Список покемонов */
+        .pokemon-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .pokemon-item {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* Визуальный эффект для покемона в нокауте */
+        .pokemon-item.knocked-out {
+            border-left-color: #e74c3c;
+            opacity: 0.6;
+            background: #ffebee;
+        }
+        .pokemon-item.knocked-out .pokemon-name {
+            text-decoration: line-through;
+            color: #e74c3c;
+        }
+
+        /* Сообщения (алерты) */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+        /* Поля ввода */
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+
+<!-- === СООБЩЕНИЯ === -->
+<div th:if="${gameMessage}" class="alert alert-info" th:text="${gameMessage}"></div>
+<div th:if="${battleMessage}" class="alert alert-warning" th:text="${battleMessage}"></div>
+
+<div th:if="${victoryMessage}" class="alert alert-success">
+    <h2 style="margin:0; font-size: 1.5rem;" th:text="${victoryMessage}"></h2>
+    <p style="margin: 10px 0 0 0;">Ты прошел игру! Можешь начать заново или сохранить прогресс.</p>
+</div>
+
+<!-- === КАРТОЧКА 1: СТАТИСТИКА ТРЕНЕРА === -->
+<div class="card">
+    <h2>👤 Профиль тренера</h2>
+    <div class="flex-row" style="justify-content: space-around; text-align: center;">
+        <div>
+            <div style="font-size: 0.9rem; color: #777;">Имя</div>
+            <div style="font-size: 1.5rem; font-weight: bold;" th:text="${trainer.getName()}"></div>
+        </div>
+        <div>
+            <div style="font-size: 0.9rem; color: #777;">Уровень</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #f39c12;" th:text="${trainer.getLevel()}"></div>
+        </div>
+        <div>
+            <div style="font-size: 0.9rem; color: #777;">Всего побед</div>
+            <div style="font-size: 1.5rem; font-weight: bold; color: #2ecc71;" th:text="${trainer.getTotalWins()}"></div>
+        </div>
+    </div>
+</div>
+
+<!-- === КАРТОЧКА 2: ДЕЙСТВИЯ === -->
+<div class="card">
+    <h2>⚡ Действия</h2>
+
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Поймать нового покемона:</label>
+        <form action="/add" method="post" class="flex-row">
+            <input type="text" name="pokemonName" placeholder="Например: Пикачу" required>
+            <button type="submit" class="btn btn-orange">Поймать</button>
+        </form>
+    </div>
+
+    <div>
+        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Исследование:</label>
+        <form action="/search" method="post">
+            <button type="submit" class="btn btn-blue" style="width: 100%;">🌿 Искать диких покемонов в траве</button>
+        </form>
+    </div>
+</div>
+
+<!-- === КАРТОЧКА 3: КОМАНДА === -->
+<div class="card">
+    <h2>🎒 Твоя команда</h2>
+
+    <!-- Активные покемоны -->
+    <ul class="pokemon-list">
+        <li th:each="pokemon : ${trainer.getPokemons()}"
+            th:if="${pokemon.isActive()}"
+            class="pokemon-item">
+            <span class="pokemon-name" style="font-weight: bold;" th:text="${pokemon.getName()}"></span>
+            <span>
+                    Ур. <span th:text="${pokemon.getLevel()}"></span> |
+                    Атк. <span th:text="${pokemon.getAttack()}"></span> |
+                    Побед: <span th:text="${pokemon.getCountWins()}"></span>
+                </span>
+        </li>
+        <li th:if="${#lists.isEmpty(trainer.getPokemons().?[isActive()])}"
+            style="color: #777; text-align: center; padding: 10px;">
+            У тебя нет активных покемонов. Поймай нового или загрузи сохранение!
+        </li>
+    </ul>
+
+    <!-- Нокаутированные покемоны (отдельная секция) -->
+    <div th:if="${!#lists.isEmpty(trainer.getPokemons().?[!isActive()])}"
+         style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #ddd;">
+        <h3 style="color: #e74c3c; font-size: 1rem; margin-bottom: 10px;">
+            💀 В нокауте:
+        </h3>
+        <ul class="pokemon-list">
+            <li th:each="pokemon : ${trainer.getPokemons()}"
+                th:if="${!pokemon.isActive()}"
+                style="background: #ffebee; padding: 8px 12px; margin-bottom: 5px; border-radius: 6px;
+                           border-left: 3px solid #e74c3c; opacity: 0.7; font-size: 0.9rem;">
+                <span th:text="${pokemon.getName()}" style="text-decoration: line-through;"></span>
+                <span style="color: #e74c3c; margin-left: 10px;">(в нокауте)</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- === КАРТОЧКА 4: УПРАВЛЕНИЕ ИГРОЙ === -->
+<div class="card" style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
+    <h2 style="border-bottom-color: #e9ecef;">⚙️ Управление</h2>
+    <div class="flex-row" style="justify-content: center;">
+        <form action="/save" method="post">
+            <button type="submit" class="btn btn-green">💾 Сохранить</button>
+        </form>
+        <form action="/load" method="post">
+            <button type="submit" class="btn btn-blue">📂 Загрузить</button>
+        </form>
+        <form action="/reset" method="post">
+            <button type="submit" class="btn btn-red">🔄 Начать заново</button>
+        </form>
+    </div>
+    <div style="text-align: center; margin-top: 15px;">
+        <a href="/" style="color: #777; text-decoration: none; font-size: 0.9rem;">← Вернуться на самый первый экран</a>
+    </div>
+</div>
+
+</body>
+</html>
